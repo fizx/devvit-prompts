@@ -1,0 +1,88 @@
+// These are the only hooks!
+import {
+  Devvit,
+  useState,
+  useInterval,
+  useAsync,
+  useRedis,
+  useInfo,
+} from "@devvit/public-api";
+
+function App(props: JSX.Props): JSX.Element {
+  const [count, setCount] = useState(0);
+  const [increment, setIncrement] = useState(1);
+  const redis = useRedis(); // Redis is the persistent database API.
+  const info: Info = useInfo(); // { userId: "..", dimensions: {w: 500, h:300}, fields: {incrBy: 5} }
+
+  /* async is allowed in events and callbacks, but not in rendering */
+  const incrAndSave = (n: number) => async () => {
+    const newCount = await redis.incrBy("count", n);
+    setCount(newCount);
+  };
+
+  // useInterval is short-lived and only active while the app is in-use, similar to a browser's setInterval
+  // For persistent, long-lived timing, use redis!
+  useInterval(incrAndSave(increment), 1000);
+
+  useAsync(
+    async () => {
+      // this is the async phase
+      let saved = await redis.get("count");
+      return parseInt(saved ?? "0");
+    },
+    {
+      // you can set state after receiving the data by using the optional onLoad key
+      onLoad: (data) => setCount(data),
+    }
+  );
+
+  return (
+    <vstack gap="medium" alignment="center middle">
+      <text size="xl">Count: {count}</text>
+      <input id="incrBy" value="1" />
+      <button onPress={async () => setIncrement(parseInt(info.fields.incrBy))}>
+        Increase
+      </button>
+    </vstack>
+  );
+}
+
+function AlternateApp(props: JSX.Props): JSX.Element {
+  const [increment, setIncrement] = useState(1);
+  const redis = useRedis(); // Redis is the persistent database API.
+  const info: Info = useInfo(); // { userId: "..", dimensions: {w: 500, h:300}, fields: {incrBy: 5} }
+
+  /* async is allowed in events and callbacks, but not in rendering */
+  const incrAndSave = (n: number) => async () => {
+    const newCount = await redis.incrBy("count", n);
+  };
+
+  const { data, error, loading } = useAsync(
+    async () => {
+      let saved = await redis.get("count");
+      return parseInt(saved ?? "0");
+    },
+    {
+      refreshEvery: 1000,
+    }
+  );
+
+  return (
+    <vstack gap="medium" alignment="center middle">
+      <text size="xl">Count: {data}</text>
+      {loading && <text>Loading...</text>}
+      {error && <text>Error: {error.message}</text>}
+      <input id="incrBy" value="1" />
+      <button onPress={async () => setIncrement(parseInt(info.fields.incrBy))}>
+        Increase
+      </button>
+    </vstack>
+  );
+}
+
+Devvit.addCustomPostType({
+  name: "Test App",
+  render: App,
+});
+
+export default Devvit;

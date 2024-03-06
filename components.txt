@@ -1,0 +1,234 @@
+export interface IntrinsicElements {
+  blocks: RootProps;
+  hstack: StackProps;
+  vstack: StackProps;
+  zstack: StackProps;
+  text: TextProps;
+  button: ButtonProps;
+  image: ImageProps;
+  spacer: SpacerProps;
+  icon: IconProps;
+  input: InputProps;
+  avatar: AvatarProps;
+  fullsnoo: FullSnooProps;
+  animation: AnimationProps;
+  webview: WebViewProps;
+}
+
+export type IntrinsicElementsType = keyof IntrinsicElements;
+
+//region Attribute Values
+export type SizePixels = `${number}px`;
+export type SizePercent = `${number}%`;
+export type SizeString = SizePixels | SizePercent | number;
+export type Alignment =
+  | `${VerticalAlignment}`
+  | `${HorizontalAlignment}`
+  | `${VerticalAlignment} ${HorizontalAlignment}`
+  | `${HorizontalAlignment} ${VerticalAlignment}`;
+export type AnimationDirection = "forward" | "backward";
+export type AnimationLoop = "repeat" | "bounce";
+export type AnimationType = "lottie";
+export type AvatarBackground = "light" | "dark";
+export type AvatarFacing = "left" | "right";
+export type AvatarSize =
+  | "xxsmall"
+  | "xsmall"
+  | "small"
+  | "medium"
+  | "large"
+  | "xlarge"
+  | "xxlarge"
+  | "xxxlarge";
+export type ButtonAppearance =
+  | "secondary"
+  | "primary"
+  | "plain"
+  | "bordered"
+  | "media"
+  | "destructive"
+  | "caution"
+  | "success";
+export type ButtonSize = "small" | "medium" | "large";
+export type ColorString = string;
+export type ContainerBorderWidth = Thickness;
+export type ContainerCornerRadius =
+  | "none"
+  | "small"
+  | "medium"
+  | "large"
+  | "full";
+export type ContainerGap = "none" | "small" | "medium" | "large";
+export type ContainerPadding = "none" | "xsmall" | "small" | "medium" | "large";
+export type FullSnooSize =
+  | "xsmall"
+  | "small"
+  | "medium"
+  | "large"
+  | "xlarge"
+  | "xxlarge";
+export type HorizontalAlignment = "start" | "center" | "end";
+export type IconSize = "xsmall" | "small" | "medium" | "large";
+export type ImageResizeMode = "none" | "fit" | "fill" | "cover" | "scale-down";
+export type SpacerSize = "xsmall" | "small" | "medium" | "large";
+export type SpacerShape = "invisible" | "thin" | "square";
+export type TextOutline = Thickness;
+export type TextSize =
+  | "xsmall"
+  | "small"
+  | "medium"
+  | "large"
+  | "xlarge"
+  | "xxlarge";
+export type TextStyle = "body" | "metadata" | "heading";
+export type TextWeight = "regular" | "bold";
+export type TextOverflow = "clip" | "ellipsis";
+export type Thickness = "none" | "thin" | "thick";
+export type VerticalAlignment = "top" | "middle" | "bottom";
+export type RootHeight = "regular" | "tall";
+//endregion
+
+//region Element Attributes
+export type BaseProps = {
+  width?: SizeString;
+  height?: SizeString;
+  minWidth?: SizeString;
+  minHeight?: SizeString;
+  maxWidth?: SizeString;
+  maxHeight?: SizeString;
+  grow?: boolean;
+  key?: string;
+  id?: string;
+};
+
+export type OnPressEvent = {
+  state?: {};
+};
+
+export type OnPressEventHandler = (event: OnPressEvent) => void | Promise<void>;
+
+export type Actionable = {
+  onPress?: OnPressEventHandler | undefined;
+};
+
+export type HasElementChildren = {
+  children?: ElementChildren;
+};
+
+export type HasStringChildren = {
+  children?: StringChildren;
+};
+
+export type RootProps = HasElementChildren & {
+  height?: RootHeight | undefined;
+};
+
+export type StackProps = BaseProps &
+  HasElementChildren &
+  Actionable & {
+    reverse?: boolean | undefined;
+    alignment?: Alignment;
+    padding?: ContainerPadding | undefined;
+    gap?: ContainerGap | undefined;
+    border?: ContainerBorderWidth | undefined;
+    borderColor?: ColorString | undefined;
+    lightBorderColor?: ColorString | undefined;
+    darkBorderColor?: ColorString | undefined;
+    cornerRadius?: ContainerCornerRadius | undefined;
+    backgroundColor?: ColorString | undefined;
+    lightBackgroundColor?: ColorString | undefined;
+    darkBackgroundColor?: ColorString | undefined;
+  };
+
+export type TextProps = BaseProps &
+  HasStringChildren &
+  Actionable & {
+    size?: TextSize | undefined;
+    weight?: TextWeight | undefined;
+    color?: ColorString | undefined;
+    lightColor?: ColorString | undefined;
+    darkColor?: ColorString | undefined;
+    alignment?: Alignment | undefined;
+    outline?: TextOutline | undefined;
+    style?: TextStyle | undefined;
+    selectable?: boolean | undefined;
+    wrap?: boolean | undefined;
+    overflow?: TextOverflow | undefined;
+  };
+
+export type ButtonProps = BaseProps &
+  HasStringChildren &
+  Actionable & {
+    icon?: IconName | undefined;
+    size?: ButtonSize | undefined;
+    appearance?: ButtonAppearance | undefined;
+    textColor?: ColorString | undefined;
+    lightTextColor?: ColorString | undefined;
+    darkTextColor?: ColorString | undefined;
+    // not available in all platforms yet
+    // backgroundColor?: ColorString | undefined;
+    disabled?: boolean | undefined;
+  };
+
+export type ImageProps = BaseProps &
+  Actionable & {
+    url: string;
+    imageWidth: SizePixels | number;
+    imageHeight: SizePixels | number;
+    description?: string | undefined;
+    resizeMode?: ImageResizeMode | undefined;
+  };
+
+export type SpacerProps = BaseProps & {
+  size?: SpacerSize | undefined;
+  shape?: SpacerShape | undefined;
+};
+
+export type IconProps = BaseProps &
+  HasStringChildren &
+  Actionable & {
+    name: IconName;
+    color?: ColorString | undefined;
+    lightColor?: ColorString | undefined;
+    darkColor?: ColorString | undefined;
+    size?: IconSize | undefined;
+  };
+
+export type AvatarProps = BaseProps &
+  Actionable & {
+    thingId: string;
+    facing?: AvatarFacing | undefined;
+    size?: AvatarSize | undefined;
+    background?: AvatarBackground | undefined;
+  };
+
+export type FullSnooProps = BaseProps &
+  Actionable & {
+    userId: string;
+    facing?: AvatarFacing | undefined;
+    size?: FullSnooSize | undefined;
+  };
+
+export type InputProps = BaseProps & {
+  placeholder?: string | undefined;
+  value?: string | undefined;
+  disabled?: boolean | undefined;
+  onChange?: (value: string) => void;
+};
+
+export type AnimationProps = BaseProps &
+  Actionable & {
+    url: string;
+    imageWidth: SizePixels | number;
+    imageHeight: SizePixels | number;
+    type?: AnimationType | undefined;
+    loop?: boolean | undefined;
+    loopMode?: AnimationLoop | undefined;
+    autoplay?: boolean | undefined;
+    speed?: number | undefined;
+    direction?: AnimationDirection | undefined;
+  };
+
+export type WebViewProps = BaseProps & {
+  url: string;
+};
